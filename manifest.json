@@ -1,0 +1,20 @@
+{
+  "name": "Caça aos Porcos: O Apocalipse Suíno",
+  "short_name": "Caça aos Porcos",
+  "description": "Jogo arcade 2.5D de tiro e defesa da fazenda contra hordas de porcos com armas, luneta de sniper e blindados!",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#0b0c10",
+  "theme_color": "#d63031",
+  "categories": ["games", "action", "arcade"],
+  "icons": [
+    {
+      "src": "src/styles/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

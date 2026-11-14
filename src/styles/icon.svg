@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#e84118"/>
+      <stop offset="100%" stop-color="#c23616"/>
+    </radialGradient>
+    <radialGradient id="pigGrad" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffb8b8"/>
+      <stop offset="70%" stop-color="#ff7979"/>
+      <stop offset="100%" stop-color="#eb4d4b"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="110" fill="url(#bg)"/>
+  
+  <!-- Orelhas do Porco -->
+  <polygon points="120,130 160,220 220,170" fill="#eb4d4b" stroke="#30336b" stroke-width="8"/>
+  <polygon points="392,130 352,220 292,170" fill="#eb4d4b" stroke="#30336b" stroke-width="8"/>
+  
+  <!-- Cabeça do Porco -->
+  <circle cx="256" cy="280" r="160" fill="url(#pigGrad)" stroke="#30336b" stroke-width="12"/>
+  
+  <!-- Olhos -->
+  <ellipse cx="200" cy="240" rx="18" ry="24" fill="#ffffff" stroke="#130f40" stroke-width="6"/>
+  <circle cx="204" cy="242" r="10" fill="#130f40"/>
+  <circle cx="208" cy="238" r="4" fill="#ffffff"/>
+  
+  <ellipse cx="312" cy="240" rx="18" ry="24" fill="#ffffff" stroke="#130f40" stroke-width="6"/>
+  <circle cx="308" cy="242" r="10" fill="#130f40"/>
+  <circle cx="312" cy="238" r="4" fill="#ffffff"/>
+  
+  <!-- Focinho -->
+  <ellipse cx="256" cy="320" rx="65" ry="46" fill="#f8a5c2" stroke="#30336b" stroke-width="10"/>
+  <ellipse cx="230" cy="320" rx="12" ry="18" fill="#c44569"/>
+  <ellipse cx="282" cy="320" rx="12" ry="18" fill="#c44569"/>
+  
+  <!-- Mira de Precisão Sobreposta -->
+  <circle cx="256" cy="256" r="220" fill="none" stroke="#2ed573" stroke-width="12" stroke-dasharray="28 14"/>
+  <line x1="256" y1="20" x2="256" y2="492" stroke="#2ed573" stroke-width="6" stroke-dasharray="16 10"/>
+  <line x1="20" y1="256" x2="492" y2="256" stroke="#2ed573" stroke-width="6" stroke-dasharray="16 10"/>
+  <circle cx="256" cy="256" r="8" fill="#ff4757"/>
+</svg>

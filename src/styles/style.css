@@ -666,21 +666,217 @@ body, html {
     color: #a4b0be;
 }
 
-/* Responsividade Mobile */
-@media (max-width: 768px) {
+/* Responsividade Mobile e Controles Touch */
+.mobile-controls-layer {
+    position: absolute;
+    bottom: 88px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    pointer-events: none;
+    z-index: 20;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-controls-layer.hidden {
+    display: none !important;
+}
+
+.mobile-ctrl-left,
+.mobile-ctrl-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    pointer-events: auto;
+}
+
+.mobile-action-btn {
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s ease, filter 0.1s ease, box-shadow 0.1s ease;
+    touch-action: manipulation;
+}
+
+.mobile-action-btn:active {
+    transform: scale(0.90);
+    filter: brightness(1.35);
+}
+
+.ctrl-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.ctrl-label {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+/* Botão de Disparo / Gatilho Gigante */
+.fire-btn {
+    width: 84px;
+    height: 84px;
+    background: radial-gradient(circle at 35% 35%, #ff6b81, #ff4757 60%, #c0392b);
+    border: 3.5px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 8px 24px rgba(255, 71, 87, 0.55), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+}
+
+.fire-btn .ctrl-icon {
+    font-size: 2.2rem;
+}
+
+.fire-btn .ctrl-label {
+    font-size: 0.70rem;
+    color: #fff200;
+}
+
+/* Botão de Recarregar */
+.reload-btn {
+    width: 66px;
+    height: 66px;
+    background: rgba(30, 39, 46, 0.92);
+    border: 2.5px solid #ffa502;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.reload-btn .ctrl-icon {
+    font-size: 1.7rem;
+}
+
+/* Botão de Luneta / Zoom Sniper */
+.scope-btn {
+    width: 66px;
+    height: 66px;
+    background: rgba(30, 39, 46, 0.92);
+    border: 2.5px solid #2ed573;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+.scope-btn.active {
+    background: radial-gradient(circle at 35% 35%, #2ed573, #10ac84);
+    border-color: #ffffff;
+    box-shadow: 0 0 20px rgba(46, 213, 115, 0.8);
+}
+
+/* Overlay de Aviso de Orientação de Tela */
+.orientation-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(11, 12, 16, 0.96);
+    backdrop-filter: blur(14px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+    text-align: center;
+}
+
+.orientation-card {
+    background: rgba(30, 39, 46, 0.95);
+    border: 2px solid #ffa502;
+    border-radius: 20px;
+    padding: 28px 24px;
+    max-width: 360px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+}
+
+.phone-rotate-icon {
+    font-size: 3.8rem;
+    margin-bottom: 14px;
+    animation: rotatePhone 2.2s infinite ease-in-out;
+}
+
+@keyframes rotatePhone {
+    0% { transform: rotate(0deg); }
+    35% { transform: rotate(-90deg); }
+    70% { transform: rotate(-90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.orientation-card h3 {
+    font-size: 1.25rem;
+    color: #ffa502;
+    margin-bottom: 8px;
+}
+
+.orientation-card p {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+/* Ajustes de Responsividade Geral para Telas Pequenas */
+@media (max-width: 900px) {
+    #hud-top {
+        top: 6px;
+        left: 8px;
+        right: 8px;
+        gap: 6px;
+    }
+    .hud-badge {
+        padding: 4px 8px;
+        gap: 6px;
+    }
+    .hud-icon {
+        font-size: 1.1rem;
+    }
+    .hud-value {
+        font-size: 0.95rem;
+    }
+    .hud-btn {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
     .weapons-bar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 4px 8px;
+        max-width: 98vw;
         gap: 6px;
     }
     .weapon-btn {
+        min-width: 60px;
         padding: 6px 8px;
     }
     .weapon-desc {
         display: none;
     }
-    .stats-board {
-        grid-template-columns: repeat(2, 1fr);
+    .mobile-controls-layer {
+        bottom: 80px;
     }
-    .controls-grid {
-        grid-template-columns: 1fr;
+}
+
+@media (max-width: 600px) {
+    .hud-label {
+        display: none;
+    }
+    .hud-badge.status-badge {
+        font-size: 0.8rem;
+    }
+    .fire-btn {
+        width: 72px;
+        height: 72px;
+    }
+    .reload-btn,
+    .scope-btn {
+        width: 58px;
+        height: 58px;
     }
 }

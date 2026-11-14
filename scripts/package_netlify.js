@@ -36,9 +36,15 @@ function copyDirRecursive(src, dest) {
     }
 }
 
-// 1. Copia index.html
+// 1. Copia index.html, manifest.json e sw.js (PWA Mobile)
 fs.copyFileSync(path.join(rootDir, 'index.html'), path.join(deployDir, 'index.html'));
-console.log('[OK] index.html copiado.');
+if (fs.existsSync(path.join(rootDir, 'manifest.json'))) {
+    fs.copyFileSync(path.join(rootDir, 'manifest.json'), path.join(deployDir, 'manifest.json'));
+}
+if (fs.existsSync(path.join(rootDir, 'sw.js'))) {
+    fs.copyFileSync(path.join(rootDir, 'sw.js'), path.join(deployDir, 'sw.js'));
+}
+console.log('[OK] index.html, manifest.json e sw.js copiados.');
 
 // 2. Copia pasta modular src/
 copyDirRecursive(path.join(rootDir, 'src'), path.join(deployDir, 'src'));

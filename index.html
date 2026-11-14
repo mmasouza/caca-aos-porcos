@@ -2,14 +2,20 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Caça aos Porcos: O Apocalipse Suíno 🐷</title>
     <meta name="description" content="Caça aos Porcos: O Apocalipse Suíno - Jogo de tiro arcade 2.5D no navegador com armas, luneta de sniper e javalis!">
     <meta property="og:title" content="Caça aos Porcos: O Apocalipse Suíno 🐷">
     <meta property="og:description" content="Defenda a fazenda e transforme os porcos fugitivos em fatias crocantes de bacon!">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#d63031">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐷</text></svg>">
+    <link rel="icon" href="src/styles/icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Caça aos Porcos">
+    <link rel="apple-touch-icon" href="src/styles/icon.svg">
     <link rel="stylesheet" href="src/styles/style.css">
 </head>
 <body>
@@ -46,6 +52,8 @@
                 </div>
                 <button id="btn-toggle-xmas" class="hud-btn xmas-btn" title="Ativar/Desativar Tema de Natal [N]">🎄 Natal [N]</button>
                 <button id="btn-open-crosshairs" class="hud-btn" title="Personalizar Miras e Armas [V]">🎯 Miras [V]</button>
+                <button id="btn-toggle-mobile" class="hud-btn" title="Alternar Controles Touch Mobile">📱 Mobile</button>
+                <button id="btn-fullscreen" class="hud-btn" title="Alternar Tela Cheia">⛶ Tela Cheia</button>
                 <button id="sound-toggle-btn" class="hud-btn" title="Ativar/Desativar Som [M]">🔊 Som</button>
             </div>
         </header>
@@ -263,6 +271,39 @@
                 </div>
             </div>
         </div>
+
+        <!-- CONTROLES MOBILE TOUCH OTIMIZADOS -->
+        <div id="mobile-controls" class="mobile-controls-layer">
+            <!-- Botão de Luneta / Zoom (Canto Inferior Esquerdo) -->
+            <div class="mobile-ctrl-left">
+                <button id="btn-mobile-scope" class="mobile-action-btn scope-btn" title="Alternar Luneta">
+                    <span class="ctrl-icon">🔭</span>
+                    <span class="ctrl-label">LUNETA</span>
+                </button>
+            </div>
+
+            <!-- Botões de Ação na Direita (Dedão Direito) -->
+            <div class="mobile-ctrl-right">
+                <button id="btn-mobile-reload" class="mobile-action-btn reload-btn" title="Recarregar [R]">
+                    <span class="ctrl-icon">🔄</span>
+                    <span class="ctrl-label">RECARREGAR</span>
+                </button>
+                <button id="btn-mobile-fire" class="mobile-action-btn fire-btn" title="Atirar">
+                    <span class="ctrl-icon">💥</span>
+                    <span class="ctrl-label">ATIRAR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- AVISO DE ORIENTAÇÃO DE TELA MOBILE -->
+        <div id="orientation-alert" class="orientation-overlay hidden">
+            <div class="orientation-card">
+                <div class="phone-rotate-icon">📱 ➔ 📲</div>
+                <h3>GIRE O CELULAR NA HORIZONTAL</h3>
+                <p>Caça aos Porcos é melhor jogado no modo paisagem widescreen (16:9).</p>
+                <button id="btn-dismiss-orientation" class="btn btn-secondary">Jogar na Vertical</button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts e Módulos Arquiteturais do Jogo -->
@@ -274,5 +315,12 @@
     <script src="src/systems/environment.js"></script>
     <script src="src/systems/gun_render.js"></script>
     <script src="src/core/game.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail:', err));
+            });
+        }
+    </script>
 </body>
 </html>

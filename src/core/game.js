@@ -234,6 +234,128 @@ class PigHunterGame {
                 this.updateHUD();
             }
         });
+
+        // Inicializa Controles e Gestos Touch Mobile
+        this.initMobileControls();
+    }
+
+    initMobileControls() {
+        this.isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth <= 900;
+        this.showMobileControls = this.isMobile;
+
+        const mobileLayer = document.getElementById('mobile-controls');
+        if (mobileLayer) {
+            mobileLayer.classList.toggle('hidden', !this.showMobileControls);
+        }
+
+        // 1. Botão de Disparo / Gatilho Gigante
+        const fireBtn = document.getElementById('btn-mobile-fire');
+        if (fireBtn) {
+            const handleFire = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.state !== 'PLAYING') return;
+                if (navigator.vibrate) navigator.vibrate(30);
+                this.performShot();
+            };
+            fireBtn.addEventListener('touchstart', handleFire, { passive: false });
+            fireBtn.addEventListener('mousedown', handleFire);
+        }
+
+        // 2. Botão de Recarregar
+        const reloadBtn = document.getElementById('btn-mobile-reload');
+        if (reloadBtn) {
+            const handleReload = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (navigator.vibrate) navigator.vibrate(20);
+                this.weapons.startReload();
+                this.updateHUD();
+            };
+            reloadBtn.addEventListener('touchstart', handleReload, { passive: false });
+            reloadBtn.addEventListener('click', handleReload);
+        }
+
+        // 3. Botão de Luneta / Zoom Sniper
+        const scopeBtn = document.getElementById('btn-mobile-scope');
+        if (scopeBtn) {
+            const handleScope = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.weapons.currentKey !== 'sniper') {
+                    this.selectWeapon('sniper');
+                }
+                const scoping = this.sniperScope.toggle();
+                scopeBtn.classList.toggle('active', scoping);
+                if (navigator.vibrate) navigator.vibrate(35);
+                this.particles.addFloatingText(scoping ? 'LUNETA ATIVADA [4X] 🔭' : 'VISÃO ABERTA 👁️', this.mouseX, this.mouseY - 35, {
+                    size: 16,
+                    color: '#2ed573',
+                    life: 0.7
+                });
+            };
+            scopeBtn.addEventListener('touchstart', handleScope, { passive: false });
+            scopeBtn.addEventListener('click', handleScope);
+        }
+
+        // 4. Botão de Tela Cheia (Fullscreen)
+        const fullscreenBtn = document.getElementById('btn-fullscreen');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    const docEl = document.documentElement;
+                    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                    if (req) req.call(docEl).catch(() => {});
+                    fullscreenBtn.innerText = '⛶ Sair';
+                } else {
+                    const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
+                    if (exit) exit.call(document).catch(() => {});
+                    fullscreenBtn.innerText = '⛶ Tela Cheia';
+                }
+            });
+        }
+
+        // 5. Botão de Alternar Controles Mobile no HUD
+        const toggleMobileBtn = document.getElementById('btn-toggle-mobile');
+        if (toggleMobileBtn) {
+            toggleMobileBtn.classList.toggle('active', this.showMobileControls);
+            toggleMobileBtn.addEventListener('click', () => {
+                this.showMobileControls = !this.showMobileControls;
+                if (mobileLayer) {
+                    mobileLayer.classList.toggle('hidden', !this.showMobileControls);
+                }
+                toggleMobileBtn.classList.toggle('active', this.showMobileControls);
+                this.particles.addFloatingText(this.showMobileControls ? 'CONTROLES MOBILE ATIVADOS 📱' : 'CONTROLES MOBILE OCULTOS', this.mouseX, this.mouseY - 45, {
+                    size: 16,
+                    color: '#ffd32a',
+                    life: 0.8
+                });
+            });
+        }
+
+        // 6. Alerta de Orientação de Tela (Retrato / Paisagem)
+        this.checkOrientation();
+        window.addEventListener('resize', () => this.checkOrientation());
+        window.addEventListener('orientationchange', () => this.checkOrientation());
+
+        const dismissBtn = document.getElementById('btn-dismiss-orientation');
+        if (dismissBtn) {
+            dismissBtn.addEventListener('click', () => {
+                const orientAlert = document.getElementById('orientation-alert');
+                if (orientAlert) orientAlert.classList.add('hidden');
+            });
+        }
+    }
+
+    checkOrientation() {
+        const orientAlert = document.getElementById('orientation-alert');
+        if (!orientAlert) return;
+        const isPortrait = window.innerHeight > window.innerWidth && (this.isMobile || window.innerWidth <= 768);
+        if (isPortrait) {
+            orientAlert.classList.remove('hidden');
+        } else {
+            orientAlert.classList.add('hidden');
+        }
     }
 
     startNewGame(mode = 'DEFENSE') {
@@ -1182,6 +1304,13 @@ class PigHunterGame {
                 btn.classList.remove('locked');
             }
         });
+
+        // Atualiza estado do botão de luneta mobile
+        const scopeBtn = document.getElementById('btn-mobile-scope');
+        if (scopeBtn) {
+            scopeBtn.classList.toggle('active', this.weapons.currentKey === 'sniper' && this.sniperScope.isScoping);
+            scopeBtn.style.opacity = this.weapons.currentKey === 'sniper' ? '1.0' : '0.65';
+        }
     }
 
     render() {
