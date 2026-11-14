@@ -398,6 +398,10 @@ body, html {
 }
 
 /* Modais e Menus */
+.hidden {
+    display: none !important;
+}
+
 .modal-overlay {
     position: absolute;
     inset: 0;
@@ -411,7 +415,7 @@ body, html {
 }
 
 .modal-overlay.hidden {
-    display: none;
+    display: none !important;
 }
 
 .modal-card {
@@ -785,6 +789,10 @@ body, html {
     z-index: 9999;
     padding: 24px;
     text-align: center;
+}
+
+.orientation-overlay.hidden {
+    display: none !important;
 }
 
 .orientation-card {
