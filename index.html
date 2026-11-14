@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caça aos Porcos: O Apocalipse Suíno 🐷</title>
+    <meta name="description" content="Caça aos Porcos: O Apocalipse Suíno - Jogo de tiro arcade 2.5D no navegador com armas, luneta de sniper e javalis!">
+    <meta property="og:title" content="Caça aos Porcos: O Apocalipse Suíno 🐷">
+    <meta property="og:description" content="Defenda a fazenda e transforme os porcos fugitivos em fatias crocantes de bacon!">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#d63031">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐷</text></svg>">
+    <link rel="stylesheet" href="src/styles/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Canvas Principal -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Barra Superior (HUD) -->
+        <header id="hud-top">
+            <div class="hud-group">
+                <div class="hud-badge score-badge">
+                    <span class="hud-icon">🏆</span>
+                    <div>
+                        <span class="hud-label">PONTOS</span>
+                        <span id="hud-score" class="hud-value">0</span>
+                    </div>
+                </div>
+                <div id="hud-combo" class="combo-badge" style="display: none;">x1</div>
+            </div>
+
+            <div class="hud-group">
+                <div class="hud-badge status-badge">
+                    <span id="hud-mode-status" class="hud-value">Onda 1 | Vidas: ❤️❤️❤️</span>
+                </div>
+            </div>
+
+            <div class="hud-group">
+                <div class="hud-badge coin-badge">
+                    <span class="hud-icon">🪙</span>
+                    <div>
+                        <span class="hud-label">MOEDAS</span>
+                        <span id="hud-coins" class="hud-value">0</span>
+                    </div>
+                </div>
+                <button id="btn-toggle-xmas" class="hud-btn xmas-btn" title="Ativar/Desativar Tema de Natal [N]">🎄 Natal [N]</button>
+                <button id="btn-open-crosshairs" class="hud-btn" title="Personalizar Miras e Armas [V]">🎯 Miras [V]</button>
+                <button id="sound-toggle-btn" class="hud-btn" title="Ativar/Desativar Som [M]">🔊 Som</button>
+            </div>
+        </header>
+
+        <!-- Barra Inferior de Armas e Munição -->
+        <footer id="hud-bottom">
+            <div class="weapons-bar">
+                <button class="weapon-btn active" data-weapon="shotgun" title="Tecla [1]">
+                    <span class="weapon-shortcut">1</span>
+                    <span class="weapon-emoji">💥</span>
+                    <div class="weapon-info">
+                        <span class="weapon-name">Espingarda</span>
+                        <span class="weapon-desc">Calibre 12</span>
+                    </div>
+                </button>
+
+                <button class="weapon-btn" data-weapon="sniper" title="Tecla [2]">
+                    <span class="weapon-shortcut">2</span>
+                    <span class="weapon-emoji">🎯</span>
+                    <div class="weapon-info">
+                        <span class="weapon-name">Rifle Sniper</span>
+                        <span class="weapon-desc">Precisão</span>
+                    </div>
+                </button>
+
+                <button class="weapon-btn" data-weapon="machinegun" title="Tecla [3]">
+                    <span class="weapon-shortcut">3</span>
+                    <span class="weapon-emoji">⚡</span>
+                    <div class="weapon-info">
+                        <span class="weapon-name">Metralhadora Vulcan</span>
+                        <span class="weapon-desc">Automática (100 Tiros)</span>
+                    </div>
+                </button>
+
+                <button class="weapon-btn" data-weapon="launcher" title="Tecla [4]">
+                    <span class="weapon-shortcut">4</span>
+                    <span class="weapon-emoji">🚀</span>
+                    <div class="weapon-info">
+                        <span class="weapon-name">Super Bazuca</span>
+                        <span class="weapon-desc">Devastação RPG</span>
+                    </div>
+                </button>
+            </div>
+
+            <div class="ammo-card">
+                <div class="ammo-header">
+                    <span class="ammo-title">MUNIÇÃO</span>
+                    <span class="reload-hint">[R] Recarregar</span>
+                </div>
+                <div id="hud-ammo-count" class="ammo-display">6 / 6</div>
+            </div>
+        </footer>
+
+        <!-- MODAL DE INÍCIO -->
+        <div id="start-modal" class="modal-overlay">
+            <div class="modal-card">
+                <div class="pig-banner">🎅🎄🐷❄️🥓</div>
+                <h1 class="game-title">CAÇA AOS PORCOS</h1>
+                <p class="game-subtitle">Edição Especial de Natal: O Apocalipse Suíno invadiu a fazenda natalina! Mire, atire e transforme os porcos fugitivos em fatias crocantes de bacon!</p>
+
+                <div class="modes-selection">
+                    <button id="btn-play-defense" class="btn btn-primary pulse-btn">
+                        <span class="btn-icon">🛡️</span>
+                        <div>
+                            <strong>Modo Defesa da Fazenda</strong>
+                            <small>Impeça os porcos de invadirem o celeiro em ondas infinitas!</small>
+                        </div>
+                    </button>
+
+                    <button id="btn-play-arcade" class="btn btn-warning">
+                        <span class="btn-icon">⏱️</span>
+                        <div>
+                            <strong>Modo Arcade (90 Segundos)</strong>
+                            <small>Faça a maior pontuação possível com combos frenéticos!</small>
+                        </div>
+                    </button>
+
+                    <button id="btn-open-shop" class="btn btn-secondary">
+                        <span class="btn-icon">🛒</span>
+                        <div>
+                            <strong>Loja & Arsenal da Fazenda</strong>
+                            <small>Desbloqueie armas pesadas e melhorias com suas moedas.</small>
+                        </div>
+                    </button>
+                </div>
+
+                <div class="controls-guide">
+                    <h3>🎮 CONTROLES:</h3>
+                    <div class="controls-grid">
+                        <div>🖱️ <strong>Mouse / Toque:</strong> Mirar e Atirar</div>
+                        <div>⌨️ <strong>[R] ou [Espaço]:</strong> Recarregar</div>
+                        <div>⌨️ <strong>[1, 2, 3, 4]:</strong> Trocar de Arma</div>
+                        <div>⌨️ <strong>[P] / [ESC]:</strong> Pausar jogo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE PAUSA -->
+        <div id="pause-modal" class="modal-overlay hidden">
+            <div class="modal-card mini-card">
+                <h2>⏸️ JOGO PAUSADO</h2>
+                <p>Os porcos estão congelados no ar!</p>
+                <div class="modal-actions">
+                    <button id="btn-resume" class="btn btn-primary">Continuar [P]</button>
+                    <button id="btn-pause-menu" class="btn btn-secondary">Menu Principal</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE FIM DE JOGO -->
+        <div id="game-over-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="pig-banner">🥓💀🥓</div>
+                <h2 id="game-over-title">FIM DE JOGO!</h2>
+                <div class="stats-board">
+                    <div class="stat-box">
+                        <span class="stat-label">PONTUAÇÃO FINAL</span>
+                        <span id="final-score" class="stat-number highlight">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">MELHOR RECORDE</span>
+                        <span id="final-best" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">PORCOS CAÇADOS</span>
+                        <span id="final-pigs" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">TIROS NA CABEÇA</span>
+                        <span id="final-headshots" class="stat-number">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">PRECISÃO</span>
+                        <span id="final-accuracy" class="stat-number">0%</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">MOEDAS GANHAS</span>
+                        <span id="final-coins" class="stat-number coin-text">+0</span>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="btn-restart" class="btn btn-primary pulse-btn">Jogar Novamente 🔄</button>
+                    <button id="btn-gameover-menu" class="btn btn-secondary">Menu Principal 🏠</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DE CUSTOMIZAÇÃO DE MIRA E ARMAS -->
+        <div id="customizer-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <h2>🎯 PERSONALIZAR MIRAS & ARSENAL</h2>
+                <p class="shop-desc">Escolha o seu retículo favorito ou pressione <strong>[V]</strong> durante a partida para alternar rapidamente!</p>
+
+                <div class="customizer-section">
+                    <h3>ESTILO DO RETÍCULO</h3>
+                    <div class="crosshair-options-grid">
+                        <button class="crosshair-opt-btn active" data-style="weapon">
+                            <span class="opt-icon">💥</span>
+                            <strong>Padrão da Arma</strong>
+                            <small>Dinâmica por calibre</small>
+                        </button>
+                        <button class="crosshair-opt-btn" data-style="red_dot">
+                            <span class="opt-icon">🔴</span>
+                            <strong>Red Dot Reflex</strong>
+                            <small>Ponto vermelho tático</small>
+                        </button>
+                        <button class="crosshair-opt-btn" data-style="cross">
+                            <span class="opt-icon">➕</span>
+                            <strong>Cruz Militar</strong>
+                            <small>Estilo CS / Mil-Spec</small>
+                        </button>
+                        <button class="crosshair-opt-btn" data-style="circle_laser">
+                            <span class="opt-icon">⭕</span>
+                            <strong>Círculo Sci-Fi</strong>
+                            <small>Laser holográfico</small>
+                        </button>
+                        <button class="crosshair-opt-btn" data-style="mil_dot">
+                            <span class="opt-icon">🔭</span>
+                            <strong>Luneta Tática</strong>
+                            <small>Com escala Mil-Dot</small>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="customizer-section">
+                    <h3>COR DA MIRA</h3>
+                    <div class="color-options-row">
+                        <button class="color-opt-btn active" data-color="#2ed573" style="background: #2ed573;" title="Verde Neon"></button>
+                        <button class="color-opt-btn" data-color="#ff4757" style="background: #ff4757;" title="Vermelho Laser"></button>
+                        <button class="color-opt-btn" data-color="#fed330" style="background: #fed330;" title="Amarelo Cibernético"></button>
+                        <button class="color-opt-btn" data-color="#1e90ff" style="background: #1e90ff;" title="Azul Elétrico"></button>
+                        <button class="color-opt-btn" data-color="#ffffff" style="background: #ffffff;" title="Branco Puro"></button>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button id="btn-close-customizer" class="btn btn-primary">Salvar e Continuar ✔️</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL DA LOJA -->
+        <div id="shop-modal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="shop-top">
+                    <h2>🛒 ARSENAL & LOJA DA FAZENDA</h2>
+                    <div class="shop-balance">Saldo: 🪙 <span id="shop-coins-display">0</span></div>
+                </div>
+                <p class="shop-desc">Compre armas melhores para enfrentar ondas cada vez mais ferozes!</p>
+                <div id="shop-items-list" class="shop-items-container"></div>
+                <div class="modal-actions">
+                    <button id="btn-close-shop" class="btn btn-secondary">Fechar Loja</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts e Módulos Arquiteturais do Jogo -->
+    <script src="src/audio/audio.js"></script>
+    <script src="src/systems/weapons.js"></script>
+    <script src="src/entities/pig.js"></script>
+    <script src="src/entities/sniper_horizon.js"></script>
+    <script src="src/systems/particles.js"></script>
+    <script src="src/systems/environment.js"></script>
+    <script src="src/systems/gun_render.js"></script>
+    <script src="src/core/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "caca-aos-porcos",
+  "version": "2.5.0",
+  "description": "Caça aos Porcos: O Apocalipse Suíno - Jogo arcade 2.5D de tiro e sobrevivência na fazenda com arsenal completo, visão de sniper, inimigos com armaduras e segredos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node scripts/server.js",
+    "check": "node scripts/check.js",
+    "package": "node scripts/package_netlify.js",
+    "build": "node scripts/package_netlify.js"
+  },
+  "keywords": [
+    "game",
+    "html5-canvas",
+    "arcade",
+    "shooter",
+    "web-audio-api",
+    "vanilla-javascript",
+    "gameloop"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/caca-aos-porcos/caca-aos-porcos.git"
+  }
+}
