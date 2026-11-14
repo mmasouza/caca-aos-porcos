@@ -12,7 +12,8 @@ const MIME_TYPES = {
     '.json': 'application/json',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
-    '.ico': 'image/x-icon'
+    '.ico': 'image/x-icon',
+    '.svg': 'image/svg+xml'
 };
 
 const server = http.createServer((req, res) => {
@@ -39,6 +40,8 @@ const server = http.createServer((req, res) => {
     });
 });
 
-server.listen(PORT, '127.0.0.1', () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Servidor local ativo em:`);
+    console.log(`  > Local:   http://localhost:${PORT}`);
+    console.log(`  > Rede/Wi-Fi (Celular): http://192.168.1.254:${PORT}`);
 });
