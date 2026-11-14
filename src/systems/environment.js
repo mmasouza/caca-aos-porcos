@@ -255,7 +255,7 @@ class EnvironmentManager {
         this.moonBandages = [];
         this.wifeShoutTimer = 0;
         this.wifeShoutText = '';
-        this.wifeSlideX = -450;
+        this.wifeSlideX = this.w + 60;
         this.roosterSpin = 0;
         this.snowmanHatOff = false;
     }
@@ -383,12 +383,13 @@ class EnvironmentManager {
             }
         }
 
-        // Atualiza Dona Benta (Bronca da Mulher do Fazendeiro ao atirar na lua)
+        // Atualiza Dona Benta (Bronca da Mulher do Fazendeiro no canto superior direito)
+        const wifeTargetX = this.w - 485;
         if (this.wifeShoutTimer > 0) {
             this.wifeShoutTimer -= dt;
-            this.wifeSlideX = Math.min(25, this.wifeSlideX + dt * 1400);
+            this.wifeSlideX = Math.max(wifeTargetX, this.wifeSlideX - dt * 1800);
         } else {
-            this.wifeSlideX = Math.max(-500, this.wifeSlideX - dt * 900);
+            this.wifeSlideX = Math.min(this.w + 60, this.wifeSlideX + dt * 1200);
         }
 
         // Desacelera giro do cata-vento do moinho
@@ -1529,8 +1530,8 @@ class EnvironmentManager {
                 });
 
                 const wifeQuotes = [
-                    "ZEEECO! PARA DE DAR TIRO NA LUA QUE EU QUERO DORMIR, HOMEM! 👵🍳",
-                    "ZECO! A LUA NÃO É PORCO NÃO, SEU DESASTRADO! VAI ACORDAR O VILAREJO! 👵💢",
+                    "ZÉ! PARA DE DAR TIRO NA LUA QUE EU QUERO DORMIR, HOMEM! 👵🍳",
+                    "ZÉ! A LUA NÃO É PORCO NÃO, SEU DESASTRADO! VAI ACORDAR O VILAREJO! 👵💢",
                     "LARGA ESSA ESPINGARDA E VAI CARPIR O LOTE, HOMEM DE DEUS! 👵🧹",
                     "MAIS UM TIRO NA LUA E HOJE VOCÊ DORME NO CHIQUEIRO COM OS PORCOS! 👵💥",
                     "Ô ZÉ! SE ACERTAR SÃO JORGE NA LUA O DRAGÃO VEM ATRÁS D'OCÊ! 👵🐉"
@@ -1618,10 +1619,10 @@ class EnvironmentManager {
     }
 
     drawWifeSpeechBubble(ctx) {
-        if (this.wifeSlideX <= -400) return;
+        if (this.wifeSlideX >= this.w + 50) return;
 
         ctx.save();
-        ctx.translate(this.wifeSlideX, 520);
+        ctx.translate(this.wifeSlideX, 75);
 
         // Sombra de caixa de diálogo estilizada
         ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
