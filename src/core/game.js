@@ -412,7 +412,6 @@ class PigHunterGame {
             });
         }
     }
-    }
 
     checkOrientation() {
         const orientAlert = document.getElementById('orientation-alert');
