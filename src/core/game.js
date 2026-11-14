@@ -99,37 +99,77 @@ class PigHunterGame {
 
     initCanvas() {
         const resize = () => {
-            const container = document.getElementById('game-container');
-            const cWidth = container.clientWidth;
-            const cHeight = container.clientHeight;
+            const container = document.getElementById('game-container') || document.body;
+            const cWidth = container.clientWidth || window.innerWidth;
+            const cHeight = container.clientHeight || window.innerHeight;
 
-            // Escala mantendo 16:9
-            const scaleX = cWidth / this.virtualWidth;
-            const scaleY = cHeight / this.virtualHeight;
-            this.scaleRatio = Math.min(scaleX, scaleY);
+            // Proporção de tela widescreen dinâmica (16:9, 19.5:9, 20:9, 21:9)
+            const aspect = cWidth / cHeight;
+
+            // Altura virtual padrão: 720p (mantém escala visual e física de jogo consistente)
+            if (aspect >= 1.0) {
+                this.virtualHeight = 720;
+                // Expande a largura para preencher 100% da tela widescreen sem barras pretas laterais
+                this.virtualWidth = Math.max(1280, Math.round(720 * Math.max(16 / 9, aspect)));
+            } else {
+                // Modo retrato (caso dispensado o alerta de giro)
+                this.virtualWidth = 1280;
+                this.virtualHeight = Math.round(1280 / aspect);
+            }
 
             this.canvas.width = this.virtualWidth;
             this.canvas.height = this.virtualHeight;
 
-            this.canvas.style.width = `${Math.floor(this.virtualWidth * this.scaleRatio)}px`;
-            this.canvas.style.height = `${Math.floor(this.virtualHeight * this.scaleRatio)}px`;
+            // Canvas ocupa 100% da tela útil de ponta a ponta
+            this.canvas.style.width = '100vw';
+            this.canvas.style.height = '100dvh';
 
             this.canvasRect = this.canvas.getBoundingClientRect();
+
+            // Atualiza subsistemas com a nova resolução widescreen dinâmica
+            if (this.env) {
+                if (typeof this.env.resize === 'function') {
+                    this.env.resize(this.virtualWidth, this.virtualHeight);
+                } else {
+                    this.env.w = this.virtualWidth;
+                    this.env.h = this.virtualHeight;
+                }
+            }
+            if (this.gunRenderer) {
+                this.gunRenderer.w = this.virtualWidth;
+                this.gunRenderer.h = this.virtualHeight;
+            }
+            if (this.sniperScope) {
+                this.sniperScope.w = this.virtualWidth;
+                this.sniperScope.h = this.virtualHeight;
+            }
         };
 
         window.addEventListener('resize', resize);
         window.addEventListener('orientationchange', resize);
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', resize);
+        }
         resize();
     }
 
     initEventListeners() {
         const getCanvasCoords = (e) => {
             this.canvasRect = this.canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let clientX = this.mouseX;
+            let clientY = this.mouseY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e.clientX !== undefined) {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const rectW = this.canvasRect.width || window.innerWidth;
+            const rectH = this.canvasRect.height || window.innerHeight;
             return {
-                x: (clientX - this.canvasRect.left) / this.scaleRatio,
-                y: (clientY - this.canvasRect.top) / this.scaleRatio
+                x: (clientX - this.canvasRect.left) * (this.virtualWidth / rectW),
+                y: (clientY - this.canvasRect.top) * (this.virtualHeight / rectH)
             };
         };
 
@@ -243,10 +283,15 @@ class PigHunterGame {
         this.isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.innerWidth <= 900;
         this.showMobileControls = this.isMobile;
 
-        const mobileLayer = document.getElementById('mobile-controls');
-        if (mobileLayer) {
-            mobileLayer.classList.toggle('hidden', !this.showMobileControls);
-        }
+        const updateMobileUI = () => {
+            document.body.classList.toggle('mobile-ui-active', this.showMobileControls);
+            const toggleMobileBtn = document.getElementById('btn-toggle-mobile');
+            if (toggleMobileBtn) {
+                toggleMobileBtn.classList.toggle('active', this.showMobileControls);
+            }
+        };
+
+        updateMobileUI();
 
         // 1. Botão de Disparo / Gatilho Gigante
         const fireBtn = document.getElementById('btn-mobile-fire');
@@ -298,14 +343,21 @@ class PigHunterGame {
             scopeBtn.addEventListener('click', handleScope);
         }
 
-        // 4. Botão de Tela Cheia (Fullscreen)
+        // 4. Botão de Tela Cheia (Fullscreen com trava em paisagem)
         const fullscreenBtn = document.getElementById('btn-fullscreen');
         if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', () => {
+            fullscreenBtn.addEventListener('click', async () => {
                 if (!document.fullscreenElement) {
                     const docEl = document.documentElement;
                     const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
-                    if (req) req.call(docEl).catch(() => {});
+                    if (req) {
+                        try {
+                            await req.call(docEl);
+                            if (screen.orientation && screen.orientation.lock) {
+                                await screen.orientation.lock('landscape').catch(() => {});
+                            }
+                        } catch (e) {}
+                    }
                     fullscreenBtn.innerText = '⛶ Sair';
                 } else {
                     const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
@@ -318,14 +370,10 @@ class PigHunterGame {
         // 5. Botão de Alternar Controles Mobile no HUD
         const toggleMobileBtn = document.getElementById('btn-toggle-mobile');
         if (toggleMobileBtn) {
-            toggleMobileBtn.classList.toggle('active', this.showMobileControls);
             toggleMobileBtn.addEventListener('click', () => {
                 this.showMobileControls = !this.showMobileControls;
-                if (mobileLayer) {
-                    mobileLayer.classList.toggle('hidden', !this.showMobileControls);
-                }
-                toggleMobileBtn.classList.toggle('active', this.showMobileControls);
-                this.particles.addFloatingText(this.showMobileControls ? 'CONTROLES MOBILE ATIVADOS 📱' : 'CONTROLES MOBILE OCULTOS', this.mouseX, this.mouseY - 45, {
+                updateMobileUI();
+                this.particles.addFloatingText(this.showMobileControls ? 'CONTROLES MOBILE ATIVADOS 📱' : 'MODO DESKTOP ATIVADO 💻', this.mouseX, this.mouseY - 45, {
                     size: 16,
                     color: '#ffd32a',
                     life: 0.8
@@ -345,6 +393,25 @@ class PigHunterGame {
                 if (orientAlert) orientAlert.classList.add('hidden');
             });
         }
+
+        const forceLandscapeBtn = document.getElementById('btn-force-landscape');
+        if (forceLandscapeBtn) {
+            forceLandscapeBtn.addEventListener('click', async () => {
+                const docEl = document.documentElement;
+                const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                if (req) {
+                    try {
+                        await req.call(docEl);
+                        if (screen.orientation && screen.orientation.lock) {
+                            await screen.orientation.lock('landscape').catch(() => {});
+                        }
+                    } catch (e) {}
+                }
+                const orientAlert = document.getElementById('orientation-alert');
+                if (orientAlert) orientAlert.classList.add('hidden');
+            });
+        }
+    }
     }
 
     checkOrientation() {

@@ -260,6 +260,19 @@ class EnvironmentManager {
         this.snowmanHatOff = false;
     }
 
+    resize(virtualWidth, virtualHeight) {
+        this.w = virtualWidth;
+        this.h = virtualHeight;
+
+        // Distribui estrelas e nuvens pela nova largura
+        for (const s of this.stars) {
+            if (s.x > this.w) s.x = Math.random() * this.w;
+        }
+        for (const c of this.clouds) {
+            if (c.x > this.w + 100) c.x = Math.random() * this.w;
+        }
+    }
+
     setThemeByWave(waveNumber) {
         const sequence = ['DAY', 'SUNSET', 'NIGHT', 'XMAS', 'STORM', 'VOLCANO'];
         const index = (waveNumber - 1) % sequence.length;
@@ -462,7 +475,7 @@ class EnvironmentManager {
         ctx.save();
         if (this.theme.isNight) {
             // Lua Cheia Gigante com Halo e Crateras
-            const mx = this.theme.moonX;
+            const mx = this.theme.moonX ? Math.round(this.w - (1280 - this.theme.moonX)) : this.w - 330;
             const my = this.theme.moonY;
             const mr = this.theme.moonRadius;
 
@@ -550,7 +563,7 @@ class EnvironmentManager {
 
         } else if (this.theme.sunColor) {
             // Sol com Flare e Raio Solar
-            const sx = this.theme.sunX;
+            const sx = this.theme.sunX ? Math.round(this.w - (1280 - this.theme.sunX)) : this.w - 330;
             const sy = this.theme.sunY;
             const sr = this.theme.sunRadius;
 
@@ -653,31 +666,36 @@ class EnvironmentManager {
     }
 
     drawStructures(ctx) {
+        const barnX = Math.round(this.w - 300);
+        const windmillX = Math.round(Math.max(160, this.w * 0.17));
+        const centerTreeX = Math.round(this.w * 0.58);
+        const snowmanX = Math.round(this.w * 0.44);
+
         if (this.theme.id === 'VOLCANO') {
             // Castelo de Pedra Vulcânico do Rei Porco
-            this.drawCastle(ctx, 960, 270);
+            this.drawCastle(ctx, barnX - 20, 270);
         } else if (this.theme.id === 'XMAS') {
             // Edição Mágica de Natal: Celeiro com Neve e Guirlanda, Moinho Iluminado, Pinheiro e Boneco de Neve
-            this.drawChristmasBarn(ctx, 980, 310);
-            this.drawChristmasWindmill(ctx, 220, 340);
-            this.drawPineTree(ctx, 740, 470);
-            this.drawSnowman(ctx, 580, 520);
+            this.drawChristmasBarn(ctx, barnX, 310);
+            this.drawChristmasWindmill(ctx, windmillX, 340);
+            this.drawPineTree(ctx, centerTreeX, 470);
+            this.drawSnowman(ctx, snowmanX, 520);
         } else if (this.theme.id === 'SUNSET') {
             // Moinho + Macieira de Outono
-            this.drawWindmill(ctx, 220, 340);
-            this.drawAppleTree(ctx, 980, 310);
-            this.drawPumpkinPatch(ctx, 740, 520);
+            this.drawWindmill(ctx, windmillX, 340);
+            this.drawAppleTree(ctx, barnX, 310);
+            this.drawPumpkinPatch(ctx, centerTreeX, 520);
         } else if (this.theme.id === 'NIGHT') {
             // Celeiro Assombrado com Luzes Aconchegantes e Abóboras Esculpidas
-            this.drawBarnNight(ctx, 980, 310);
-            this.drawWindmill(ctx, 220, 340);
-            this.drawJackOLantern(ctx, 780, 520);
+            this.drawBarnNight(ctx, barnX, 310);
+            this.drawWindmill(ctx, windmillX, 340);
+            this.drawJackOLantern(ctx, centerTreeX, 520);
         } else {
             // Fazenda Clássica Ensolarada ou Chuvosa
-            this.drawWindmill(ctx, 220, 340);
-            this.drawBarn(ctx, 980, 310);
-            this.drawHayBale(ctx, 750, 520);
-            this.drawHayBale(ctx, 810, 530);
+            this.drawWindmill(ctx, windmillX, 340);
+            this.drawBarn(ctx, barnX, 310);
+            this.drawHayBale(ctx, centerTreeX, 520);
+            this.drawHayBale(ctx, centerTreeX + 60, 530);
         }
     }
 
@@ -1517,7 +1535,7 @@ class EnvironmentManager {
     checkSecretHit(shotX, shotY, weaponKey, isScoping) {
         // 1. Checagem de tiro na LUA (Noite ou Natal)
         if (this.theme.isNight && this.theme.moonX) {
-            const mx = this.theme.moonX;
+            const mx = this.theme.moonX ? Math.round(this.w - (1280 - this.theme.moonX)) : this.w - 330;
             const my = this.theme.moonY;
             const mr = this.theme.moonRadius || 44;
             const distMoon = Math.hypot(shotX - mx, shotY - my);
@@ -1599,8 +1617,8 @@ class EnvironmentManager {
 
         // 4. Checagem de tiro no Boneco de Neve (XMAS)
         if (this.theme.hasSnow && !this.snowmanHatOff) {
-            const hatX = 280;
-            const hatY = 530 - 45;
+            const hatX = Math.round(this.w * 0.44);
+            const hatY = 520 - 45;
             const distHat = Math.hypot(shotX - hatX, shotY - hatY);
             if (distHat <= 25) {
                 this.snowmanHatOff = true;

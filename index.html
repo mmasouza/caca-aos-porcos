@@ -58,52 +58,75 @@
             </div>
         </header>
 
-        <!-- Barra Inferior de Armas e Munição -->
-        <footer id="hud-bottom">
-            <div class="weapons-bar">
-                <button class="weapon-btn active" data-weapon="shotgun" title="Tecla [1]">
-                    <span class="weapon-shortcut">1</span>
-                    <span class="weapon-emoji">💥</span>
-                    <div class="weapon-info">
-                        <span class="weapon-name">Espingarda</span>
-                        <span class="weapon-desc">Calibre 12</span>
-                    </div>
+        <!-- Barra Inferior de Controles e Arsenal Ergonômico Widescreen -->
+        <footer id="hud-bottom" class="hud-bottom-dock">
+            <!-- Zona do Polegar Esquerdo: Luneta + Seleção de Armas (1, 2, 3, 4) -->
+            <div class="thumb-zone-left">
+                <button id="btn-mobile-scope" class="mobile-action-btn scope-btn" title="Alternar Luneta [Q/Shift]">
+                    <span class="ctrl-icon">🔭</span>
+                    <span class="ctrl-label">LUNETA</span>
                 </button>
 
-                <button class="weapon-btn" data-weapon="sniper" title="Tecla [2]">
-                    <span class="weapon-shortcut">2</span>
-                    <span class="weapon-emoji">🎯</span>
-                    <div class="weapon-info">
-                        <span class="weapon-name">Rifle Sniper</span>
-                        <span class="weapon-desc">Precisão</span>
-                    </div>
-                </button>
+                <div class="weapons-bar">
+                    <button class="weapon-btn active" data-weapon="shotgun" title="Espingarda Calibre 12 [1]">
+                        <span class="weapon-shortcut">1</span>
+                        <span class="weapon-emoji">💥</span>
+                        <div class="weapon-info">
+                            <span class="weapon-name">Espingarda</span>
+                            <span class="weapon-desc">Calibre 12</span>
+                        </div>
+                    </button>
 
-                <button class="weapon-btn" data-weapon="machinegun" title="Tecla [3]">
-                    <span class="weapon-shortcut">3</span>
-                    <span class="weapon-emoji">⚡</span>
-                    <div class="weapon-info">
-                        <span class="weapon-name">Metralhadora Vulcan</span>
-                        <span class="weapon-desc">Automática (100 Tiros)</span>
-                    </div>
-                </button>
+                    <button class="weapon-btn" data-weapon="sniper" title="Rifle Sniper de Precisão [2]">
+                        <span class="weapon-shortcut">2</span>
+                        <span class="weapon-emoji">🎯</span>
+                        <div class="weapon-info">
+                            <span class="weapon-name">Rifle</span>
+                            <span class="weapon-desc">Precisão</span>
+                        </div>
+                    </button>
 
-                <button class="weapon-btn" data-weapon="launcher" title="Tecla [4]">
-                    <span class="weapon-shortcut">4</span>
-                    <span class="weapon-emoji">🚀</span>
-                    <div class="weapon-info">
-                        <span class="weapon-name">Super Bazuca</span>
-                        <span class="weapon-desc">Devastação RPG</span>
-                    </div>
-                </button>
+                    <button class="weapon-btn" data-weapon="machinegun" title="Metralhadora Vulcan [3]">
+                        <span class="weapon-shortcut">3</span>
+                        <span class="weapon-emoji">⚡</span>
+                        <div class="weapon-info">
+                            <span class="weapon-name">Vulcan</span>
+                            <span class="weapon-desc">100 Tiros</span>
+                        </div>
+                    </button>
+
+                    <button class="weapon-btn" data-weapon="launcher" title="Super Bazuca RPG [4]">
+                        <span class="weapon-shortcut">4</span>
+                        <span class="weapon-emoji">🚀</span>
+                        <div class="weapon-info">
+                            <span class="weapon-name">Bazuca</span>
+                            <span class="weapon-desc">RPG</span>
+                        </div>
+                    </button>
+                </div>
             </div>
 
-            <div class="ammo-card">
-                <div class="ammo-header">
-                    <span class="ammo-title">MUNIÇÃO</span>
-                    <span class="reload-hint">[R] Recarregar</span>
+            <!-- Zona do Polegar Direito: Munição + Botão de Recarregar + Gatilho Principal -->
+            <div class="thumb-zone-right">
+                <div class="ammo-card" id="hud-ammo-card">
+                    <div class="ammo-header">
+                        <span class="ammo-title">MUNIÇÃO</span>
+                        <span class="reload-hint">[R] Recarregar</span>
+                    </div>
+                    <div id="hud-ammo-count" class="ammo-display">6 / 6</div>
                 </div>
-                <div id="hud-ammo-count" class="ammo-display">6 / 6</div>
+
+                <div class="action-buttons-group">
+                    <button id="btn-mobile-reload" class="mobile-action-btn reload-btn" title="Recarregar [R]">
+                        <span class="ctrl-icon">🔄</span>
+                        <span class="ctrl-label">RECARREGAR</span>
+                    </button>
+
+                    <button id="btn-mobile-fire" class="mobile-action-btn fire-btn" title="Atirar">
+                        <span class="ctrl-icon">💥</span>
+                        <span class="ctrl-label">ATIRAR</span>
+                    </button>
+                </div>
             </div>
         </footer>
 
@@ -272,36 +295,16 @@
             </div>
         </div>
 
-        <!-- CONTROLES MOBILE TOUCH OTIMIZADOS -->
-        <div id="mobile-controls" class="mobile-controls-layer">
-            <!-- Botão de Luneta / Zoom (Canto Inferior Esquerdo) -->
-            <div class="mobile-ctrl-left">
-                <button id="btn-mobile-scope" class="mobile-action-btn scope-btn" title="Alternar Luneta">
-                    <span class="ctrl-icon">🔭</span>
-                    <span class="ctrl-label">LUNETA</span>
-                </button>
-            </div>
-
-            <!-- Botões de Ação na Direita (Dedão Direito) -->
-            <div class="mobile-ctrl-right">
-                <button id="btn-mobile-reload" class="mobile-action-btn reload-btn" title="Recarregar [R]">
-                    <span class="ctrl-icon">🔄</span>
-                    <span class="ctrl-label">RECARREGAR</span>
-                </button>
-                <button id="btn-mobile-fire" class="mobile-action-btn fire-btn" title="Atirar">
-                    <span class="ctrl-icon">💥</span>
-                    <span class="ctrl-label">ATIRAR</span>
-                </button>
-            </div>
-        </div>
-
         <!-- AVISO DE ORIENTAÇÃO DE TELA MOBILE -->
         <div id="orientation-alert" class="orientation-overlay hidden">
             <div class="orientation-card">
                 <div class="phone-rotate-icon">📱 ➔ 📲</div>
                 <h3>GIRE O CELULAR NA HORIZONTAL</h3>
-                <p>Caça aos Porcos é melhor jogado no modo paisagem widescreen (16:9).</p>
-                <button id="btn-dismiss-orientation" class="btn btn-secondary">Jogar na Vertical</button>
+                <p>Caça aos Porcos foi projetado para tela widescreen panorâmica (16:9 / 20:9). Gire o aparelho para preencher 100% da tela!</p>
+                <div class="orientation-actions">
+                    <button id="btn-force-landscape" class="btn btn-primary pulse-btn">Girar & Tela Cheia ⛶</button>
+                    <button id="btn-dismiss-orientation" class="btn btn-secondary">Continuar na Vertical</button>
+                </div>
             </div>
         </div>
     </div>
